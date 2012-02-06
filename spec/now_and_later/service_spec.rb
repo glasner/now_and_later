@@ -12,6 +12,10 @@ describe NowAndLater::Service do
     end
   end
   
+  describe '.can_find' do
+    
+  end
+  
   context 'runners' do
   
     describe '.now' do

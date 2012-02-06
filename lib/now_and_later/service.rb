@@ -31,7 +31,7 @@ class NowAndLater::Service
   end
   
   ## ActiveRecord Args
-  #
+  def self.finders; @finders; end
   def self.can_find(arg,opt={})
     @finders ||= {}
     @finders[arg] = opt
