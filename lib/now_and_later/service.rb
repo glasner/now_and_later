@@ -23,13 +23,28 @@
 
 class NowAndLater::Service
   
-  
-  
-  
+  ## Args
   # setup args for runners
   def self.takes(*names)
     return @takes if names.empty?
     @takes = names
+  end
+  
+  ## ActiveRecord Args
+  #
+  def self.can_find(arg,opt={})
+    @finders ||= {}
+    @finders[arg] = opt
+    define_method arg do
+      value = instance_variable_get "@#{arg}"
+      return value unless value.is_a? Integer
+      class_name = self.class.finders[arg] || arg.camelcase
+      class_name.constantize.find value
+    end
+    define_method "#{arg}_id".to_sym do
+      value = instance_variable_get "@#{arg}"
+      value.is_a?(Integer) ? value : value.id
+    end
   end
   
   ## Runners
