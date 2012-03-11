@@ -31,20 +31,20 @@ class NowAndLater::Service
   end
   
   ## ActiveRecord Args
-  def self.finders; @finders; end
+  # setup an arg so that it be passed as ActiveRecord instance or integer
+  # calling sets up two instance methods #arg (instance) and #arg_id (int)
+  # which should be used to access arg instead of @arg
+  # e.g. can_find :account sets up:
+  # * Service#account #=> Account instance
+  # * Service#account_id #=> 1
+  ### Override Class Name
+  # use opt[:class_name] to set ActiveRecord class name as a string when
+  # class can't be inferred from arg name
   def self.can_find(arg,opt={})
     @finders ||= {}
     @finders[arg] = opt
-    define_method arg do
-      value = instance_variable_get "@#{arg}"
-      return value unless value.is_a? Integer
-      class_name = self.class.finders[arg] || arg.camelcase
-      class_name.constantize.find value
-    end
-    define_method "#{arg}_id".to_sym do
-      value = instance_variable_get "@#{arg}"
-      value.is_a?(Integer) ? value : value.id
-    end
+    define_record_getter arg
+    define_id_getter arg
   end
   
   ## Runners
@@ -80,5 +80,34 @@ class NowAndLater::Service
       instance_variable_set "@#{name}",value
     end
   end
+  
+  
+  ## ActiveRecord Args
+  
+  def self.define_record_getter(arg)
+    define_method arg do
+      value = instance_variable_get "@#{arg}"
+      return value unless given_id_for? value
+      opt = self.class.finders[arg]
+      class_name = opt[:class_name] || arg.to_s.camelcase
+      conditions = {id: value}
+      conditions["#{opt[:scope]}_id".to_sym] = send opt[:scope] if opt[:scope]
+      class_name.constantize.where(conditions).first
+    end
+  end
+  
+  def given_id_for?(value)
+    value.is_a? Integer
+  end
+  
+  def self.define_id_getter(arg)
+    define_method "#{arg}_id".to_sym do
+      value = instance_variable_get "@#{arg}"
+      value.is_a?(Integer) ? value : value.id
+    end
+  end
+  
+  # hash of all findable args
+  def self.finders; @finders; end
   
 end
