@@ -91,7 +91,7 @@ class NowAndLater::Service
       opt = self.class.finders[arg]
       class_name = opt[:class_name] || arg.to_s.camelcase
       conditions = {id: value}
-      conditions["#{opt[:scope]}_id".to_sym] = send opt[:scope] if opt[:scope]
+      conditions["#{opt[:belongs_to]}_id".to_sym] = send opt[:belongs_to] if opt[:belongs_to]
       class_name.constantize.where(conditions).first
     end
   end

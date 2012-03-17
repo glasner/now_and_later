@@ -5,13 +5,13 @@
 module NowAndLater::Runner
   
   # run given service now
-  def run(symbol,args={})
-    service(symbol).now self,args
+  def run(symbol,*args)
+    service(symbol).now self,*args
   end
   
   # run given service later
-  def later(symbol,args={})
-    service(symbol).later self,args
+  def later(symbol,*args)
+    service(symbol).later self,*args
   end
   
   private
