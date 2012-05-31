@@ -97,7 +97,7 @@ class NowAndLater::Service
   end
   
   def given_id_for?(value)
-    value.is_a? Integer
+    value.is_a?(Integer) or value.is_a?(String)
   end
   
   def self.define_id_getter(arg)
