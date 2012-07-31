@@ -88,11 +88,15 @@ class NowAndLater::Service
     define_method arg do
       value = instance_variable_get "@#{arg}"
       return value unless given_id_for? value
+      record = instance_variable_get "@#{arg}_record"
+      return record if record
       opt = self.class.finders[arg]
       class_name = opt[:class_name] || arg.to_s.camelcase
       conditions = {id: value}
       conditions["#{opt[:belongs_to]}_id".to_sym] = send opt[:belongs_to] if opt[:belongs_to]
-      class_name.constantize.where(conditions).first
+      record = class_name.constantize.where(conditions).first
+      instance_variable_set "@#{arg}_record", record
+      record
     end
   end
   
