@@ -74,11 +74,14 @@ class NowAndLater::Service
   ## Instance Variables
   # creates an instance variable for each arg passed to initialize
   # variable names pulled from self.class.takes
+
+  # Special Cases:
+  # @opt is set to hash when nil
   def set_instance_variables(values)
     values.each_with_index do |value,i|
       name = self.class.takes[i]
       instance_variable_set "@#{name}",value
-      @opt = {} if name.eql? 'opt' and @opt.nil?
+      @opt = {} if name.eql? :opt and @opt.nil?
     end
   end
   
