@@ -81,8 +81,8 @@ class NowAndLater::Service
     values.each_with_index do |value,i|
       name = self.class.takes[i]
       instance_variable_set "@#{name}",value
-      @opt = {} if name.eql? :opt and @opt.nil?
     end
+    @opt = {} if self.class.takes.include?(:opt) and @opt.nil?
   end
   
   
