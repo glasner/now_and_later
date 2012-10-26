@@ -77,6 +77,8 @@ class NowAndLater::Service
 
   # Special Cases:
   # @opt is set to hash when nil
+
+  # values            - array of values passed to initialize
   def set_instance_variables(values)
     values.each_with_index do |value,i|
       name = self.class.takes[i]
