@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "lib/now_and_later/runner.rb",
     "lib/now_and_later/service.rb",
     "lib/now_and_later/service/with_resque.rb",
+    "now_and_later.gemspec",
     "spec/now_and_later/engine_spec.rb",
     "spec/now_and_later/enqueue_service_spec.rb",
     "spec/now_and_later/queue/with_delayed_job_spec.rb",
