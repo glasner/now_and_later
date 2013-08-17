@@ -22,14 +22,14 @@
 # e.g. SendWelcomeEmail.later @user
 
 class NowAndLater::Service
-  
+
   ## Args
   # setup args for runners
   def self.takes(*names)
     return @takes if names.empty?
     @takes = names
   end
-  
+
   ## ActiveRecord Args
   # setup an arg so that it be passed as ActiveRecord instance or integer
   # calling sets up two instance methods #arg (instance) and #arg_id (int)
@@ -46,29 +46,29 @@ class NowAndLater::Service
     define_record_getter arg
     define_id_getter arg
   end
-  
+
   ## Runners
-  
+
   def self.now(*args)
     new(*args).run
   end
-  
+
   def self.later(*args)
     NowAndLater::Queue.add self, *args
   end
-  
+
   ## Initialize
   # takes any number of args which are set as instance variables
   def initialize(*args)
-    set_instance_variables args
+    set_instance_variables args if args.size > 0
   end
-  
+
   ## Run
   # called by Service.now override with app logic
   def run; raise NotImplementedError; end
   # called by Delayed::Job after using Service.later
   alias :perform :run
-  
+
   private
 
   ## Instance Variables
@@ -86,10 +86,10 @@ class NowAndLater::Service
     end
     @opt = {} if self.class.takes.include?(:opt) and @opt.nil?
   end
-  
-  
+
+
   ## ActiveRecord Args
-  
+
   def self.define_record_getter(arg)
     define_method arg do
       value = instance_variable_get "@#{arg}"
@@ -105,19 +105,19 @@ class NowAndLater::Service
       record
     end
   end
-  
+
   def given_id_for?(value)
     value.is_a?(Integer) or value.is_a?(String)
   end
-  
+
   def self.define_id_getter(arg)
     define_method "#{arg}_id".to_sym do
       value = instance_variable_get "@#{arg}"
       value.is_a?(Integer) ? value : value.id
     end
   end
-  
+
   # hash of all findable args
   def self.finders; @finders; end
-  
+
 end
